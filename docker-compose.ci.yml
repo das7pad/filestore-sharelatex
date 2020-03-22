@@ -1,55 +1,77 @@
 # This file was auto-generated, do not edit it directly.
 # Instead run bin/update_build_scripts from
-# https://github.com/sharelatex/sharelatex-dev-environment
-# Version: 1.3.6
+# https://github.com/das7pad/sharelatex-dev-env
 
-version: "2.3"
+version: "3.1"
 
 services:
   test_unit:
     image: ci/$PROJECT_NAME:$BRANCH_NAME-$BUILD_NUMBER
     user: node
-    command: npm run test:unit:_run
-    environment:
-      NODE_ENV: test
-
+    command:
+      - npx
+      - mocha
+      - --exit
+      - --recursive
+      - --reporter
+      - xunit
+      - --reporter-options
+      - output=/home/node/unit.xml,suiteName='Unit Tests'
+      - test/unit/js
+    volumes:
+      - ./output:/home/node:z
 
   test_acceptance:
     build: .
     image: ci/$PROJECT_NAME:$BRANCH_NAME-$BUILD_NUMBER
     environment:
-      ELASTIC_SEARCH_DSN: es:9200
-      REDIS_HOST: redis
-      MONGO_HOST: mongo
-      POSTGRES_HOST: postgres
-      AWS_S3_ENDPOINT: http://s3:9090
-      AWS_S3_PATH_STYLE: 'true'
-      AWS_ACCESS_KEY_ID: fake
-      AWS_SECRET_ACCESS_KEY: fake
+      LOG_LEVEL: fatal
+      AWS_S3_ENDPOINT: ${AWS_S3_ENDPOINT}
+      AWS_S3_FORCE_PATH_STYLE: ${AWS_S3_FORCE_PATH_STYLE}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_S3_USER_FILES_BUCKET_NAME: ${AWS_BUCKET_USER}
+      AWS_S3_TEMPLATE_FILES_BUCKET_NAME: ${AWS_BUCKET_TEMPLATE}
+      AWS_S3_PUBLIC_FILES_BUCKET_NAME: ${AWS_BUCKET_PUBLIC}
       MOCHA_GREP: ${MOCHA_GREP}
-      NODE_ENV: test
       ENABLE_CONVERSIONS: "true"
       USE_PROM_METRICS: "true"
-      AWS_S3_USER_FILES_BUCKET_NAME: fake_user_files
-      AWS_S3_TEMPLATE_FILES_BUCKET_NAME: fake_template_files
-      AWS_S3_PUBLIC_FILES_BUCKET_NAME: fake_public_files
     depends_on:
-      s3:
-        condition: service_healthy
+      - minio
+      - minio_setup
     user: node
-    command: npm run test:acceptance:_run
-
-
-  tar:
-    build: .
-    image: ci/$PROJECT_NAME:$BRANCH_NAME-$BUILD_NUMBER
+    entrypoint:
+      - npx
+      - mocha
+      - --exit
+      - --recursive
+      - --reporter
+      - xunit
+      - --reporter-options
+    command:
+      - output=/home/node/acceptance.xml,suiteName='App Acceptance Tests'
+      - test/acceptance/js
     volumes:
-      - ./:/tmp/build/
-    command: tar -czf /tmp/build/build.tar.gz --exclude=build.tar.gz --exclude-vcs .
-    user: root
-  s3:
-    image: adobe/s3mock
+      - ./output:/home/node:z
+
+  minio:
+    image: minio/minio
+    command: server /data
     environment:
-      - initialBuckets=fake_user_files,fake_template_files,fake_public_files,bucket
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9090"]
+      MINIO_BROWSER: 'off'
+      MINIO_ACCESS_KEY: ${AWS_ACCESS_KEY_ID}
+      MINIO_SECRET_KEY: ${AWS_SECRET_ACCESS_KEY}
+
+  minio_setup:
+    image: minio/mc
+    entrypoint: sh
+    command:
+      - -c
+      - >
+        sleep 2
+        && mc config host add minio http://minio:9000 ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY}
+        && mc mb --ignore-existing minio/${AWS_BUCKET_USER}
+        && mc mb --ignore-existing minio/${AWS_BUCKET_TEMPLATE}
+        && mc mb --ignore-existing minio/${AWS_BUCKET_PUBLIC}
+    depends_on:
+      - minio

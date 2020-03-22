@@ -1,30 +1,30 @@
 # This file was auto-generated, do not edit it directly.
 # Instead run bin/update_build_scripts from
-# https://github.com/sharelatex/sharelatex-dev-environment
-# Version: 1.3.6
+# https://github.com/das7pad/sharelatex-dev-env
 
-FROM node:12.16.1 as base
+FROM node:12.16.1 AS base
+
+CMD ["node", "--expose-gc", "app.js"]
 
 WORKDIR /app
-COPY install_deps.sh /app
-RUN chmod 0755 ./install_deps.sh && ./install_deps.sh
 
-FROM base as app
+COPY docker_cleanup.sh /
 
-#wildcard as some files may not be in all repos
-COPY package*.json npm-shrink*.json /app/
+COPY install_deps.sh /app/
+RUN /app/install_deps.sh
 
-RUN npm install --quiet
+COPY package.json package-lock.json /app/
+
+FROM base AS dev-deps
+
+RUN /docker_cleanup.sh npm ci
+
+FROM dev-deps as dev
 
 COPY . /app
 
+RUN DATA_DIRS="uploads user_files template_files" \
+&&  mkdir -p ${DATA_DIRS} \
+&&  chown node:node ${DATA_DIRS}
 
-
-FROM base
-
-COPY --from=app /app /app
-RUN mkdir -p uploads user_files template_files \
-&&  chown node:node uploads user_files template_files
 USER node
-
-CMD ["node", "--expose-gc", "app.js"]

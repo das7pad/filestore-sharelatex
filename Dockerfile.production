@@ -1,0 +1,28 @@
+# This file was auto-generated, do not edit it directly.
+# Instead run bin/update_build_scripts from
+# https://github.com/das7pad/sharelatex-dev-env
+
+ARG BASE
+FROM $BASE
+
+RUN /docker_cleanup.sh npm ci --only=prod
+
+ADD build_artifacts.tar.gz /app
+
+RUN DATA_DIRS="uploads user_files template_files" \
+&&  mkdir -p ${DATA_DIRS} \
+&&  chown node:node ${DATA_DIRS}
+
+VOLUME /app/uploads /app/user_files /app/template_files
+
+USER node
+
+ARG RELEASE
+ARG COMMIT
+ENV \
+    SERVICE_NAME="filestore" \
+    RELEASE=${RELEASE} \
+    SENTRY_RELEASE=${RELEASE} \
+    COMMIT=${COMMIT}
+
+CMD ["node", "--expose-gc", "app.js"]
