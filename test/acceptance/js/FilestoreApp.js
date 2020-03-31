@@ -1,12 +1,9 @@
-const logger = require('logger-sharelatex')
 const Settings = require('settings-sharelatex')
 const fs = require('fs')
 const Path = require('path')
 const { promisify } = require('util')
 const disrequire = require('disrequire')
 const AWS = require('aws-sdk')
-
-logger.logger.level('info')
 
 const fsReaddir = promisify(fs.readdir)
 const sleep = promisify(setTimeout)
