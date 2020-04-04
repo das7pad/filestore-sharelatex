@@ -27,7 +27,7 @@
     "glob": "^7.1.6",
     "lodash.once": "^4.1.1",
     "logger-sharelatex": "^1.7.0",
-    "metrics-sharelatex": "^2.5.0",
+    "metrics-sharelatex": "git+https://github.com/das7pad/metrics-sharelatex.git#b6b360e7adb8f6b4ccd8deab8a70ec95cb24840f",
     "node-uuid": "~1.4.1",
     "range-parser": "^1.0.2",
     "request": "^2.88.0",
