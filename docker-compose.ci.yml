@@ -52,10 +52,15 @@ services:
       - test/acceptance/js
     volumes:
       - ./output:/home/node:z
+    tmpfs:
+      - /app/uploads:uid=1000,gid=1000
+      - /app/user_files:uid=1000,gid=1000
+      - /app/template_files:uid=1000,gid=1000
 
   minio:
     image: minio/minio
     command: server /data
+    tmpfs: /data
     environment:
       MINIO_BROWSER: 'off'
       MINIO_ACCESS_KEY: ${AWS_ACCESS_KEY_ID}

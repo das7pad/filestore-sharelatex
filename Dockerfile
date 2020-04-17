@@ -27,4 +27,6 @@ RUN DATA_DIRS="uploads user_files template_files" \
 &&  mkdir -p ${DATA_DIRS} \
 &&  chown node:node ${DATA_DIRS}
 
+VOLUME /app/uploads /app/user_files /app/template_files
+
 USER node
