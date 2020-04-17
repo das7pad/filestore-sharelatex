@@ -66,7 +66,7 @@ class RequestLogger {
             'content-length': req.headers['content-length']
           },
           res: {
-            'content-length': res._headers['content-length'],
+            'content-length': res.getHeader('content-length'),
             statusCode: res.statusCode,
             'response-time': responseTime
           },
