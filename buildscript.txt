@@ -1,6 +1,6 @@
 filestore
 --language=es
---node-version=12.16.1
+--node-version=12.16.2
 --dependencies=minio,
 --data-dirs=uploads,user_files,template_files
 --lint-runner-version=1.0.1
