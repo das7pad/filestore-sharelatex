@@ -3,4 +3,4 @@ filestore
 --node-version=12.16.1
 --dependencies=minio,
 --data-dirs=uploads,user_files,template_files
---lint-runner-version=1.0.0
+--lint-runner-version=1.0.1
