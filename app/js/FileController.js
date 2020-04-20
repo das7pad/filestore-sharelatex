@@ -45,7 +45,7 @@ function getFile(req, res, next) {
     }
   }
 
-  FileHandler.getFile(bucket, key, options, function(err, fileStream) {
+  FileHandler.getFile(bucket, key, options, function (err, fileStream) {
     if (err) {
       if (err instanceof Errors.NotFoundError) {
         res.sendStatus(404)
@@ -59,7 +59,7 @@ function getFile(req, res, next) {
       return res.sendStatus(200).end()
     }
 
-    pipeline(fileStream, res, err => {
+    pipeline(fileStream, res, (err) => {
       if (err && err.code !== 'ERR_STREAM_PREMATURE_CLOSE') {
         next(
           new Errors.ReadError({
@@ -79,7 +79,7 @@ function getFileHead(req, res, next) {
   req.requestLogger.setMessage('getting file size')
   req.requestLogger.addFields({ key, bucket })
 
-  FileHandler.getFileSize(bucket, key, function(err, fileSize) {
+  FileHandler.getFileSize(bucket, key, function (err, fileSize) {
     if (err) {
       if (err instanceof Errors.NotFoundError) {
         res.sendStatus(404)
@@ -100,7 +100,7 @@ function insertFile(req, res, next) {
   req.requestLogger.setMessage('inserting file')
   req.requestLogger.addFields({ key, bucket })
 
-  FileHandler.insertFile(bucket, key, req, function(err) {
+  FileHandler.insertFile(bucket, key, req, function (err) {
     if (err) {
       next(err)
     } else {
@@ -127,7 +127,7 @@ function copyFile(req, res, next) {
     bucket,
     `${oldProjectId}/${oldFileId}`,
     key,
-    function(err) {
+    function (err) {
       if (err) {
         if (err instanceof Errors.NotFoundError) {
           res.sendStatus(404)
@@ -149,7 +149,7 @@ function deleteFile(req, res, next) {
   req.requestLogger.addFields({ key, bucket })
   req.requestLogger.setMessage('deleting file')
 
-  FileHandler.deleteFile(bucket, key, function(err) {
+  FileHandler.deleteFile(bucket, key, function (err) {
     if (err) {
       next(err)
     } else {
@@ -165,7 +165,7 @@ function directorySize(req, res, next) {
   req.requestLogger.setMessage('getting project size')
   req.requestLogger.addFields({ projectId, bucket })
 
-  FileHandler.getDirectorySize(bucket, projectId, function(err, size) {
+  FileHandler.getDirectorySize(bucket, projectId, function (err, size) {
     if (err) {
       return next(err)
     }

@@ -19,9 +19,9 @@ const pipeline = promisify(Stream.pipeline)
 //   myBucketOnS3: 'myBucketOnGCS'
 // }
 
-module.exports = function(primary, fallback) {
+module.exports = function (primary, fallback) {
   function _wrapMethodOnBothPersistors(method) {
-    return async function(bucket, key, ...moreArgs) {
+    return async function (bucket, key, ...moreArgs) {
       const fallbackBucket = _getFallbackBucket(bucket)
 
       await Promise.all([
@@ -119,7 +119,7 @@ module.exports = function(primary, fallback) {
   }
 
   function _wrapFallbackMethod(method) {
-    return async function(bucket, key, ...moreArgs) {
+    return async function (bucket, key, ...moreArgs) {
       try {
         return await primary.promises[method](bucket, key, ...moreArgs)
       } catch (err) {
@@ -138,7 +138,7 @@ module.exports = function(primary, fallback) {
               bucket,
               key,
               key
-            ).catch(err => {
+            ).catch((err) => {
               logger.warn({ err }, 'failed to copy file from fallback')
             })
           }

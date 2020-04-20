@@ -184,7 +184,7 @@ async function deleteDirectory(bucketName, key) {
     )
   }
 
-  const objects = response.Contents.map(item => ({ Key: item.Key }))
+  const objects = response.Contents.map((item) => ({ Key: item.Key }))
   if (objects.length) {
     try {
       await _getClientForBucket(bucketName)
@@ -262,9 +262,7 @@ async function copyFile(bucketName, sourceKey, destKey) {
     CopySource: `${bucketName}/${sourceKey}`
   }
   try {
-    await _getClientForBucket(bucketName)
-      .copyObject(params)
-      .promise()
+    await _getClientForBucket(bucketName).copyObject(params).promise()
   } catch (err) {
     throw PersistorHelper.wrapError(
       err,

@@ -96,8 +96,8 @@ async function _getConvertedFileAndCache(bucket, key, convertedKey, opts) {
   // S3 provides eventual consistency for read-after-write.""
   // https://docs.aws.amazon.com/AmazonS3/latest/dev/Introduction.html#ConsistencyModel
   const readStream = fs.createReadStream(convertedFsPath)
-  readStream.on('end', function() {
-    LocalFileWriter.deleteFile(convertedFsPath, function() {})
+  readStream.on('end', function () {
+    LocalFileWriter.deleteFile(convertedFsPath, function () {})
   })
   return readStream
 }
@@ -139,7 +139,7 @@ async function _convertFile(bucket, originalKey, opts) {
       info: { bucket, originalKey, opts }
     }).withCause(err)
   }
-  LocalFileWriter.deleteFile(originalFsPath, function() {})
+  LocalFileWriter.deleteFile(originalFsPath, function () {})
   return destPath
 }
 

@@ -17,10 +17,7 @@ class RequestLogger {
 
   static errorHandler(err, req, res, next) {
     req.requestLogger.addFields({ error: err })
-    res
-      .send(err.message)
-      .status(500)
-      .end()
+    res.send(err.message).status(500).end()
   }
 
   static middleware(req, res, next) {
@@ -29,7 +26,7 @@ class RequestLogger {
 
     // override the 'end' method to log and record metrics
     const end = res.end
-    res.end = function() {
+    res.end = function () {
       // apply the standard request 'end' method before logging and metrics
       end.apply(this, arguments)
 
@@ -41,10 +38,7 @@ class RequestLogger {
         metrics.timing('http_request', responseTime, null, {
           method: req.method,
           status_code: res.statusCode,
-          path: routePath
-            .replace(/\//g, '_')
-            .replace(/:/g, '')
-            .slice(1)
+          path: routePath.replace(/\//g, '_').replace(/:/g, '').slice(1)
         })
       }
 

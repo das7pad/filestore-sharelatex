@@ -16,7 +16,7 @@ const fsStat = promisify(fs.stat)
 const fsGlob = promisify(glob)
 const rmrf = promisify(rimraf)
 
-const filterName = key => key.replace(/\//g, '_')
+const filterName = (key) => key.replace(/\//g, '_')
 
 async function sendFile(location, target, source) {
   const filteredTarget = filterName(target)

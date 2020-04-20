@@ -59,7 +59,7 @@ function getMeteredStream(stream, callback) {
     .then(() => {
       callback(null, meteredStream.bytes)
     })
-    .catch(err => {
+    .catch((err) => {
       // on error, just send how many bytes we received before the stream stopped
       callback(err, meteredStream.bytes)
     })
@@ -72,10 +72,10 @@ function getMeteredStream(stream, callback) {
 // to read them
 function waitForStreamReady(stream) {
   return new Promise((resolve, reject) => {
-    const onError = function(err) {
+    const onError = function (err) {
       reject(wrapError(err, 'error before stream became ready', {}, ReadError))
     }
-    const onStreamReady = function() {
+    const onStreamReady = function () {
       stream.removeListener('readable', onStreamReady)
       stream.removeListener('error', onError)
       resolve(stream)
