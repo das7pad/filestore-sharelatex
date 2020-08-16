@@ -12,10 +12,9 @@ const S3 = require('aws-sdk/clients/s3')
 const Stream = require('stream')
 const request = require('request')
 const { promisify } = require('util')
-const { Storage } = require('@google-cloud/storage')
 const streamifier = require('streamifier')
 chai.use(require('chai-as-promised'))
-const { ObjectId } = require('mongodb')
+const { ObjectId } = require('bson')
 const tk = require('timekeeper')
 const ChildProcess = require('child_process')
 
@@ -89,24 +88,6 @@ describe('Filestore', function () {
         app = new FilestoreApp()
         await app.runServer()
       })
-
-      if (BackendSettings[backend].gcs) {
-        before(async function () {
-          const storage = new Storage(Settings.filestore.gcs.endpoint)
-          await storage.createBucket(process.env.GCS_USER_FILES_BUCKET_NAME)
-          await storage.createBucket(process.env.GCS_PUBLIC_FILES_BUCKET_NAME)
-          await storage.createBucket(process.env.GCS_TEMPLATE_FILES_BUCKET_NAME)
-          await storage.createBucket(
-            `${process.env.GCS_USER_FILES_BUCKET_NAME}-deleted`
-          )
-          await storage.createBucket(
-            `${process.env.GCS_PUBLIC_FILES_BUCKET_NAME}-deleted`
-          )
-          await storage.createBucket(
-            `${process.env.GCS_TEMPLATE_FILES_BUCKET_NAME}-deleted`
-          )
-        })
-      }
 
       after(async function () {
         await msleep(3000)

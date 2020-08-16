@@ -22,29 +22,29 @@
   "dependencies": {
     "@overleaf/o-error": "^3.0.0",
     "@overleaf/object-persistor": "https://github.com/das7pad/object-persistor/archive/2e43bcb0be4bac9d80bf87ff2c6f359eb4a1dd64.tar.gz",
-    "aws-sdk": "^2.628.0",
+    "aws-sdk": "^2.734.0",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "glob": "^7.1.6",
     "lodash.once": "^4.1.1",
-    "logger-sharelatex": "git+https://github.com/das7pad/logger-sharelatex.git#bef2078daae2433a43e61db306e301398199daa0",
+    "logger-sharelatex": "https://github.com/das7pad/logger-sharelatex/archive/16a8d66c59318ca4b3c236136fd9603ee2edb4f0.tar.gz",
     "metrics-sharelatex": "git+https://github.com/das7pad/metrics-sharelatex.git#471b0a35d8125818393738cb95702367add6d203",
     "node-uuid": "~1.4.1",
     "range-parser": "^1.0.2",
-    "request": "^2.88.0",
-    "request-promise-native": "^1.0.8",
     "settings-sharelatex": "git+https://github.com/das7pad/settings-sharelatex.git#d0797834438df2d102798a64602adf2f71ac8e48",
-    "stream-buffers": "~0.2.6",
-    "tiny-async-pool": "^1.1.0"
+    "stream-buffers": "~0.2.6"
   },
   "devDependencies": {
+    "bson": "^1.1.5",
     "chai": "4.2.0",
     "chai-as-promised": "^7.1.1",
     "disrequire": "^1.1.0",
     "mocha": "5.2.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.8",
     "sandboxed-module": "2.0.3",
     "sinon": "7.1.1",
     "sinon-chai": "^3.3.0",
-    "streamifier": "^0.1.1"
+    "streamifier": "^0.1.1",
+    "timekeeper": "^2.2.0"
   }
 }

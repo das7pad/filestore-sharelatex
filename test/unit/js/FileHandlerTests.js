@@ -3,7 +3,7 @@ const chai = require('chai')
 const { expect } = chai
 const modulePath = '../../../app/js/FileHandler.js'
 const SandboxedModule = require('sandboxed-module')
-const { ObjectId } = require('mongodb')
+const { ObjectId } = require('bson')
 const { Errors } = require('@overleaf/object-persistor')
 
 chai.use(require('sinon-chai'))
