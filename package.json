@@ -20,6 +20,7 @@
     "test:unit:_run": "mocha --recursive --reporter spec $@ test/unit/js"
   },
   "dependencies": {
+    "@overleaf/metrics": "https://github.com/das7pad/metrics-sharelatex/archive/314238a72d2d91d3b912f4deab4a8be97a99552f.tar.gz",
     "@overleaf/o-error": "^3.0.0",
     "@overleaf/object-persistor": "https://github.com/das7pad/object-persistor/archive/2e43bcb0be4bac9d80bf87ff2c6f359eb4a1dd64.tar.gz",
     "aws-sdk": "^2.734.0",
@@ -27,10 +28,9 @@
     "express": "^4.17.1",
     "lodash.once": "^4.1.1",
     "logger-sharelatex": "https://github.com/das7pad/logger-sharelatex/archive/16a8d66c59318ca4b3c236136fd9603ee2edb4f0.tar.gz",
-    "metrics-sharelatex": "git+https://github.com/das7pad/metrics-sharelatex.git#471b0a35d8125818393738cb95702367add6d203",
     "node-uuid": "~1.4.1",
     "range-parser": "^1.0.2",
-    "settings-sharelatex": "git+https://github.com/das7pad/settings-sharelatex.git#d0797834438df2d102798a64602adf2f71ac8e48",
+    "settings-sharelatex": "https://github.com/das7pad/settings-sharelatex/archive/d0797834438df2d102798a64602adf2f71ac8e48.tar.gz",
     "stream-buffers": "~0.2.6"
   },
   "devDependencies": {
