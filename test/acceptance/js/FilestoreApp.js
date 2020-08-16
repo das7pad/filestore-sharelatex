@@ -111,6 +111,7 @@ class FilestoreApp {
       disrequire(Path.resolve(__dirname, '../../../app/js', file))
     })
     disrequire(Path.resolve(__dirname, '../../../app'))
+    disrequire('@overleaf/object-persistor')
 
     return require('../../../app')
   }

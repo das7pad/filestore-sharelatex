@@ -13,6 +13,7 @@ module.exports = {
   insertFile,
   copyFile,
   deleteFile,
+  deleteProject,
   directorySize
 }
 
@@ -45,29 +46,43 @@ function getFile(req, res, next) {
     }
   }
 
-  FileHandler.getFile(bucket, key, options, function (err, fileStream) {
+  FileHandler.getRedirectUrl(bucket, key, options, function (err, redirectUrl) {
     if (err) {
-      if (err instanceof Errors.NotFoundError) {
-        res.sendStatus(404)
-      } else {
-        next(err)
-      }
-      return
+      metrics.inc('file_redirect_error')
     }
 
-    if (req.query.cacheWarm) {
-      return res.sendStatus(200).end()
+    if (redirectUrl) {
+      metrics.inc('file_redirect')
+      return res.redirect(redirectUrl)
     }
 
-    pipeline(fileStream, res, (err) => {
-      if (err && err.code !== 'ERR_STREAM_PREMATURE_CLOSE') {
-        next(
-          new Errors.ReadError({
-            message: 'error transferring stream',
-            info: { bucket, key, format, style }
-          }).withCause(err)
-        )
+    FileHandler.getFile(bucket, key, options, function (err, fileStream) {
+      if (err) {
+        if (err instanceof Errors.NotFoundError) {
+          res.sendStatus(404)
+        } else {
+          next(err)
+        }
+        return
       }
+
+      if (req.query.cacheWarm) {
+        return res.sendStatus(200).end()
+      }
+
+      pipeline(fileStream, res, (err) => {
+        if (err && err.code === 'ERR_STREAM_PREMATURE_CLOSE') {
+          res.end()
+        } else if (err) {
+          next(
+            new Errors.ReadError(
+              'error transferring stream',
+              { bucket, key, format, style },
+              err
+            )
+          )
+        }
+      })
     })
   })
 }
@@ -123,23 +138,17 @@ function copyFile(req, res, next) {
   })
   req.requestLogger.setMessage('copying file')
 
-  PersistorManager.copyFile(
-    bucket,
-    `${oldProjectId}/${oldFileId}`,
-    key,
-    function (err) {
+  PersistorManager.copyObject(bucket, `${oldProjectId}/${oldFileId}`, key)
+    .then(() => res.sendStatus(200))
+    .catch ((err) => {
       if (err) {
         if (err instanceof Errors.NotFoundError) {
           res.sendStatus(404)
         } else {
           next(err)
         }
-        return
       }
-
-      res.sendStatus(200)
-    }
-  )
+    })
 }
 
 function deleteFile(req, res, next) {
@@ -151,6 +160,25 @@ function deleteFile(req, res, next) {
 
   FileHandler.deleteFile(bucket, key, function (err) {
     if (err) {
+      next(err)
+    } else {
+      res.sendStatus(204)
+    }
+  })
+}
+
+function deleteProject(req, res, next) {
+  metrics.inc('deleteProject')
+  const { key, bucket } = req
+
+  req.requestLogger.setMessage('deleting project')
+  req.requestLogger.addFields({ key, bucket })
+
+  FileHandler.deleteProject(bucket, key, function (err) {
+    if (err) {
+      if (err instanceof Errors.InvalidParametersError) {
+        return res.sendStatus(400)
+      }
       next(err)
     } else {
       res.sendStatus(204)

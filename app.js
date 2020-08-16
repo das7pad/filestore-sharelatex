@@ -1,8 +1,8 @@
 const Metrics = require('metrics-sharelatex')
-const logger = require('logger-sharelatex')
+Metrics.initialize(process.env.METRICS_APP_NAME || 'filestore')
 
-Metrics.initialize('filestore')
-logger.initialize('filestore')
+const logger = require('logger-sharelatex')
+logger.initialize(process.env.METRICS_APP_NAME || 'filestore')
 
 const settings = require('settings-sharelatex')
 const express = require('express')
@@ -56,6 +56,11 @@ app.delete(
   '/project/:project_id/file/:file_id',
   keyBuilder.userFileKeyMiddleware,
   fileController.deleteFile
+)
+app.delete(
+  '/project/:project_id',
+  keyBuilder.userProjectKeyMiddleware,
+  fileController.deleteProject
 )
 
 app.head(
